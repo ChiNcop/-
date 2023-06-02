@@ -12,6 +12,8 @@ const output = document.querySelector('.output')
 const paginationWrap = document.querySelector('.paginationWrap')
 const form = document.querySelector('form')
 const input = document.querySelector('input')
+const tops = document.querySelector('.top')
+
 
 
 //states
@@ -51,6 +53,8 @@ const getMovies = async (url) => {
 getMovies(API_URL_POPULAR)
 
 
+
+
 const renderMovies = (data) => {
     output.innerHTML = ''
     data.forEach(el => {
@@ -58,24 +62,29 @@ const renderMovies = (data) => {
             return el.genre
         })
         const res = result.join(' ')
+
         const div = document.createElement('div')
-        div.className = 'film'
         const krug = document.createElement('div')
-        krug.className = 'krug'
         const img = document.createElement('img')
         const text = document.createElement('h6')
-        text.className = 'janr'
         const name = document.createElement('p')
+
+        div.className = 'film'
+        krug.className = 'krug'
+        text.className = 'janr'
+        
         text.textContent = res
         name.textContent = el.nameRu
         img.src = el.posterUrl
+       
+        div.addEventListener('click', () => {
+            output.innerHTML = ''
+            getDiteils(el.filmId)
+        })
+
         krug.append()
         div.append(img, name, text)
         output.append(div)
-        div.addEventListener('click', () => {
-            output.innerHTML = ''
-            getText(el.filmId)
-        })
     })
 
 }
@@ -115,7 +124,7 @@ form.addEventListener('submit', (e) => {
     getMovies(API_URL_SEARCH + input.value)
 })
 
-const getText = async (id) => {
+const getDiteils = async (id) => {
     try {
         const request = await fetch(API_DETAILS + id, {
             headers: {
@@ -125,7 +134,7 @@ const getText = async (id) => {
         const response = await request.json()
         console.log(id);
         console.log(response);
-        renderText(response.description, response.posterUrl)
+        renderDiteils(response.description, response.posterUrl)
 
 
 
@@ -134,16 +143,18 @@ const getText = async (id) => {
     }
 }
 
-const renderText = (text, image) => {
+const renderDiteils = (text, image) => {
     const p = document.createElement('p')
     const img = document.createElement('img')
     const btn = document.createElement('button')
-    btn.textContent = 'clicl'
+
     btn.className = 'btn'
     img.className = 'image'
+
+    btn.textContent = 'clicl'
     img.src = image
     p.textContent = text
-    output.append(p, img, btn)
+    
 
     btn.addEventListener('click', () => {
         if (input.value) {
@@ -152,7 +163,8 @@ const renderText = (text, image) => {
             getMovies(API_URL_POPULAR + activeBtn);
           }
     })
+
+    output.append(p, img, btn)
 }
 
-const tops = document.querySelector('.top')
 
