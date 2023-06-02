@@ -52,17 +52,18 @@ const getMovies = async (url) => {
 }
 getMovies(API_URL_POPULAR)
 
-
+const janry = (el) => {
+    const result = el.genres.map(el => {
+        return el.genre
+    })
+    const res = result.join(' ')
+    return res
+}
 
 
 const renderMovies = (data) => {
     output.innerHTML = ''
     data.forEach(el => {
-        const result = el.genres.map(el => {
-            return el.genre
-        })
-        const res = result.join(' ')
-
         const div = document.createElement('div')
         const krug = document.createElement('div')
         const img = document.createElement('img')
@@ -73,7 +74,7 @@ const renderMovies = (data) => {
         krug.className = 'krug'
         text.className = 'janr'
         
-        text.textContent = res
+        text.textContent = janry(el)
         name.textContent = el.nameRu
         img.src = el.posterUrl
        
@@ -110,6 +111,7 @@ const pagination = (num) => {
             tops.addEventListener('click', () => {
                 getMovies(API_URL_POPULAR)
                 activeBtn = 1
+                state = ''
             })
         })
         paginationWrap.append(button)
@@ -120,8 +122,9 @@ const pagination = (num) => {
 form.addEventListener('submit', (e) => {
     e.preventDefault()
     state = input.value
+    activeBtn = 1
 
-    getMovies(API_URL_SEARCH + input.value)
+    getMovies(API_URL_SEARCH + state)
 })
 
 const getDiteils = async (id) => {
@@ -158,7 +161,7 @@ const renderDiteils = (text, image) => {
 
     btn.addEventListener('click', () => {
         if (input.value) {
-            getMovies(API_URL_SEARCH + input.value + '&page=' +activeBtn);
+            getMovies(API_URL_SEARCH + state + '&page=' +activeBtn);
           } else {
             getMovies(API_URL_POPULAR + activeBtn);
           }
