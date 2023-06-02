@@ -1,6 +1,6 @@
 
 
-const API_KEY = '2cd798da-5e96-44c1-a38a-8f4c17788b03'
+const API_KEY = '8a91212f-251a-46ed-89c2-08e085db7629'
 const BASE_URL = 'https://kinopoiskapiunofficial.tech/api'
 const API_URL_POPULAR = BASE_URL + '/v2.2/films/top?type=TOP_100_POPULAR_FILMS&page='
 const API_URL_SEARCH = BASE_URL + '/v2.1/films/search-by-keyword?keyword='
@@ -17,8 +17,18 @@ const input = document.querySelector('input')
 //states
 let activeBtn = 1
 let state = ''
-let stranitsa
 //states
+
+const renderPagination = (pagesCount) => {
+    const limit = 20
+    if (pagesCount === 1) {
+        paginationWrap.innerHTML = ''
+    } else if (pagesCount <= limit) {
+        pagination(pagesCount)
+    } else {
+        pagination(limit)
+    }
+}
 
 const getMovies = async (url) => {
     try {
@@ -29,9 +39,11 @@ const getMovies = async (url) => {
         })
         const response = await request.json()
         console.log(response);
-        
+
+
         renderMovies(response.films)
         pagination(response.pagesCount)
+        renderPagination(response.pagesCount)
     } catch (e) {
         console.log(e)
     }
@@ -81,10 +93,15 @@ const pagination = (num) => {
         button.addEventListener('click', () => {
 
             activeBtn = el
-            
+
 
             state ? getMovies(API_URL_SEARCH + state + '&page=' + el)
                 : getMovies(API_URL_POPULAR + el)
+
+            tops.addEventListener('click', () => {
+                getMovies(API_URL_POPULAR)
+                activeBtn = 1
+            })
         })
         paginationWrap.append(button)
     })
@@ -129,12 +146,13 @@ const renderText = (text, image) => {
     output.append(p, img, btn)
 
     btn.addEventListener('click', () => {
-        getMovies(API_URL_POPULAR + activeBtn)
+        if (input.value) {
+            getMovies(API_URL_SEARCH + input.value );
+          } else {
+            getMovies(API_URL_POPULAR + activeBtn);
+          }
     })
 }
 
 const tops = document.querySelector('.top')
-tops.addEventListener('click', () => {
-    getMovies(API_URL_POPULAR)
-})
 
