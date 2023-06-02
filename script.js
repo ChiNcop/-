@@ -158,7 +158,7 @@ const renderDiteils = (text, image) => {
 
     btn.addEventListener('click', () => {
         if (input.value) {
-            getMovies(API_URL_SEARCH + input.value );
+            getMovies(API_URL_SEARCH + input.value + '&page=' +activeBtn);
           } else {
             getMovies(API_URL_POPULAR + activeBtn);
           }
