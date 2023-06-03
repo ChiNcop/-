@@ -73,14 +73,14 @@ const renderMovies = (data) => {
         div.className = 'film'
         krug.className = 'krug'
         text.className = 'janr'
-        
         text.textContent = janry(el)
         name.textContent = el.nameRu
         img.src = el.posterUrl
-       
+
         div.addEventListener('click', () => {
             output.innerHTML = ''
             getDiteils(el.filmId)
+            getAlt(el.filmId)
         })
 
         krug.append()
@@ -150,6 +150,7 @@ const renderDiteils = (text, image) => {
     const p = document.createElement('p')
     const img = document.createElement('img')
     const btn = document.createElement('button')
+    const box = document.createElement('div')
 
     btn.className = 'btn'
     img.className = 'image'
@@ -157,17 +158,57 @@ const renderDiteils = (text, image) => {
     btn.textContent = 'clicl'
     img.src = image
     p.textContent = text
-    
+
 
     btn.addEventListener('click', () => {
         if (input.value) {
-            getMovies(API_URL_SEARCH + state + '&page=' +activeBtn);
-          } else {
+            getMovies(API_URL_SEARCH + state + '&page=' + activeBtn);
+        } else {
             getMovies(API_URL_POPULAR + activeBtn);
-          }
+        }
     })
 
-    output.append(p, img, btn)
+    box.append(p, img, btn)
+    output.append(box)
+}
+
+const getAlt = async (id) => {
+    try {
+        const request = await fetch(API_DETAILS + id + SIMILARS, {
+            headers: {
+                'X-API-KEY': API_KEY,
+            },
+        })
+        const response = await request.json()
+        console.log(response);
+        renderAlt(response.items)
+
+    } catch (e) {
+        console.log(e)
+    }
+
+}
+
+const renderAlt = (arr) => {
+    const result = arr.forEach(el => {
+        const name = document.createElement('p')
+        const img = document.createElement('img')
+        const box = document.createElement('div')
+
+        box.className = 'boxAlt'
+
+        name.textContent = el.nameOriginal
+        img.src = el.posterUrl
+
+        box.addEventListener('click', () => {
+            output.innerHTML = ''
+            getDiteils(el.filmId)
+            getAlt(el.filmId)
+        })
+
+        box.append(img, name)
+        output.append(box)
+    })
 }
 
 

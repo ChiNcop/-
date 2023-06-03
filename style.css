@@ -1,8 +1,11 @@
+
+
 .output {
     display: flex;
     flex-wrap: wrap;
     gap: 30px;
-    margin-top: 50px
+    margin-top: 50px;
+    
 }
 
 img {
@@ -28,4 +31,9 @@ img {
 .image {
     width: 100px;
     height: 100px;
+}
+
+.boxAlt {
+    width: 20%;
+    height: 100%;
 }
