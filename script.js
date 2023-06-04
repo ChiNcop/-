@@ -6,6 +6,7 @@ const API_URL_POPULAR = BASE_URL + '/v2.2/films/top?type=TOP_100_POPULAR_FILMS&p
 const API_URL_SEARCH = BASE_URL + '/v2.1/films/search-by-keyword?keyword='
 const API_DETAILS = BASE_URL + '/v2.2/films/'
 const SIMILARS = '/similars'
+const awards = '/awards'
 
 
 const output = document.querySelector('.output')
@@ -13,6 +14,7 @@ const paginationWrap = document.querySelector('.paginationWrap')
 const form = document.querySelector('form')
 const input = document.querySelector('input')
 const tops = document.querySelector('.top')
+
 
 
 
@@ -80,7 +82,9 @@ const renderMovies = (data) => {
         div.addEventListener('click', () => {
             output.innerHTML = ''
             getDiteils(el.filmId)
+            getAwards(el.filmId)
             getAlt(el.filmId)
+            
         })
 
         krug.append()
@@ -108,16 +112,19 @@ const pagination = (num) => {
             state ? getMovies(API_URL_SEARCH + state + '&page=' + el)
                 : getMovies(API_URL_POPULAR + el)
 
-            tops.addEventListener('click', () => {
-                getMovies(API_URL_POPULAR)
-                activeBtn = 1
-                state = ''
-            })
+
         })
         paginationWrap.append(button)
     })
 
 }
+
+tops.addEventListener('click', () => {
+    getMovies(API_URL_POPULAR)
+    activeBtn = 1
+    state = ''
+    input.value = ''
+})
 
 form.addEventListener('submit', (e) => {
     e.preventDefault()
@@ -125,6 +132,7 @@ form.addEventListener('submit', (e) => {
     activeBtn = 1
 
     getMovies(API_URL_SEARCH + state)
+
 })
 
 const getDiteils = async (id) => {
@@ -161,8 +169,8 @@ const renderDiteils = (text, image) => {
 
 
     btn.addEventListener('click', () => {
-        if (input.value) {
-            getMovies(API_URL_SEARCH + state + '&page=' + activeBtn);
+        if (input.value) {    
+            getMovies(API_URL_SEARCH + state + '&page=' + activeBtn)  
         } else {
             getMovies(API_URL_POPULAR + activeBtn);
         }
@@ -207,6 +215,39 @@ const renderAlt = (arr) => {
         })
 
         box.append(img, name)
+        output.append(box)
+    })
+}
+
+
+
+const getAwards = async (id) => {
+    try {
+        const request = await fetch(API_DETAILS + id + awards, {
+            headers: {
+                'X-API-KEY': API_KEY,
+            },
+        })
+        const response = await request.json()
+        console.log(response)
+        renderAwards(response.items)
+
+    } catch (e) {
+        console.log(e)
+    }
+
+}
+
+const renderAwards = (arr) => {
+    const result = arr.forEach(el => {
+        const nameAwards = document.createElement('p')
+        const year = document.createElement('p')
+        const box = document.createElement('div')
+    
+        nameAwards.textContent = el.nominationName
+        year.textContent = el.year
+    
+        box.append(nameAwards, year)
         output.append(box)
     })
 }
